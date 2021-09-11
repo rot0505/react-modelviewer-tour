@@ -1,9 +1,8 @@
 {
-  "name": "3d-product-test",
+  "name": "testapp",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/styled": "^11.3.0",
     "@google/model-viewer": "^1.8.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

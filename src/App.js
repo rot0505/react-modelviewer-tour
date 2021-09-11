@@ -5,13 +5,13 @@ import './App.css';
 
 function App() {
 
-  const [width, setWidth] = useState('3000')
-  const [length, setLength] = useState('3000')
-  const [height, setHeight] = useState('100')
+  const [width, setWidth] = useState('30')
+  const [length, setLength] = useState('30')
+  const [height, setHeight] = useState('10')
   const modelRef = useRef(null)
 
   const updateSize = () => {
-    modelRef.current.scale = `${width / 3000} ${length / 3000} ${height / 100}`
+    modelRef.current.scale = `${width / 30} ${length / 30} ${height / 10}`
   };
 
   const changeWidth = (e) => {
@@ -28,12 +28,13 @@ function App() {
 
   useEffect(() => {
     updateSize()
-  }, [width, length, height])
+  })
 
   return (
     <div className="container">
       <div className="col-80">
-        <model-viewer alt="model-viewer"
+        <model-viewer
+          alt="model-viewer"
           ref={modelRef}
           id="transform"
           transform="auto"
