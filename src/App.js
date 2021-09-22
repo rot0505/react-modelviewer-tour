@@ -1,111 +1,190 @@
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { useRef } from 'react';
-import * as THREE from 'three';
+import React, { Suspense, useState } from 'react'
+import { Canvas } from 'react-three-fiber'
+import { Html, Loader, OrbitControls } from '@react-three/drei'
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter'
 
-function App() {
+import Color from './Color'
+import Model from './Model'
+import White from './White'
 
-  var camera, scene, renderer;
-  var car;
-  var gltf_loader = new GLTFLoader();
-  var model = require("./assets/models/color-window.glb").default;
+const windowColors = ['brown', 'red', 'green']
+const wallColors = ['grey', 'yellow', 'lightgreen']
 
-  init();
+export default function App() {
+  const [showWindow, setShowWindow] = useState(true)
+  const [showWall, setShowWall] = useState(true)
+  const [currentModel, setCurrentModel] = useState(true)
+  const [indexWindowColor, setIndexWindowColor] = useState(0)
+  const [indexWallColor, setIndexWallColor] = useState(0)
 
-  function init() {
-    const container = document.createElement("div");
-    document.body.appendChild(container);
-    // ------------------------------------ *** ---------------------------------------
-
-    camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(40, 20, 30);
-
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xcccccc);
-
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.outputEncoding = THREE.sRGBEncoding;
-
-    container.appendChild(renderer.domElement);
-
-    // LOAD MODEL
-    gltf_loader.load(model, function (gltf) {
-      car = gltf.scene;
-      gltf.scene.scale.set(0.1, 0.1, 0.1);
-      // scene.add(gltf.scene);
-
-      render();
-    });
-
-    var light = new THREE.PointLight(0xffffff, 2);
-    light.position.set(100, 100, 100);
-    scene.add(light);
-
-    // LOAD TEXTURE
-    // const rgbe_loader = new RGBELoader();
-
-    // rgbe_loader.setDataType(THREE.UnsignedByteType);
-    // rgbe_loader.load("hdr/background.hdr", function (texture) {
-    //   const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    //   const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-
-    //   scene.background = envMap;
-    //   scene.environment = envMap;
-
-    //   render();
-    // });
-
-    // VIEW CONTROLS
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.addEventListener("change", render);
-    controls.minDistance = 20;
-    controls.maxDistance = 70;
-    controls.target.set(0, 0.5, 0);
-    controls.mouseButtons = {
-      LEFT: THREE.MOUSE.ROTATE,
-      MIDDLE: THREE.MOUSE.DOLLY,
-      RIGHT: THREE.MOUSE.ROTATE,
-    };
-    // controls.minPolarAngle = 0;
-    // controls.maxPolarAngle = Math.PI / 2;
-    controls.update();
-
-    window.addEventListener("resize", onWindowResize, false);
+  const changeWindowColor = () => {
+    const index = (indexWindowColor + 1) % 3
+    setIndexWindowColor(index)
   }
 
-  function loadModel(modelPath, x = 0.1, y = 0.1, z = 0.1) {
-    gltf_loader.load(modelPath, function (gltf) {
-      scene.remove(car);
-      car = gltf.scene;
-      gltf.scene.scale.set(x, y, z);
-      scene.add(car);
-      render();
-    });
+  const changeWallColor = () => {
+    const index = (indexWallColor + 1) % 3
+    setIndexWallColor(index)
   }
-
-  function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    render();
-  }
-
-  function render() {
-    renderer.render(scene, camera);
-  }
-
   return (
-    <div>
+    <div style={{ display: 'flex', height: '100%' }}>
+      <div style={{ width: '85%' }}>
+        <Canvas
+          concurrent
+          gl={{ alpha: false }}
+          camera={{ position: [0, 15, 30], fov: 70 }}
+          onCreated={({ gl, camera }) => {
+            camera.lookAt(0, 0, 0)
+          }}>
+          <color attach="background" args={['#fff']} />
+          <ambientLight intensity={2} />
 
+          <Suspense
+            fallback={
+              <Html center>
+                <Loader />
+              </Html>
+            }>
+            {currentModel && <White position={[10, 0, 0]} showWindow={showWindow} showWall={showWall} windowColor={windowColors[indexWindowColor]} wallColor={wallColors[indexWallColor]} />}
+            {!currentModel && <Color position={[10, 0, 0]} />}
+            <OrbitControls />
+          </Suspense>
+        </Canvas>
+      </div>
+      <div style={{ width: '15%', padding: '100px 20px', display: 'grid' }}>
+        <button onClick={() => setCurrentModel(!currentModel)}>Toggle the pre-defined product</button>
+        <button onClick={() => setShowWindow(!showWindow)}>Toggle the window visibility</button>
+        <button onClick={() => setShowWall(!showWall)}>Toggle the wall visibility</button>
+        <button onClick={() => changeWindowColor()}>Change the window color</button>
+        <button onClick={() => changeWallColor()}>Change the wall color</button>
+        {/* <button >Download the scene</button> */}
+      </div>
     </div>
   )
 }
 
-export default App;
+
+const link = document.createElement('a');
+
+function save(blob, filename) {
+
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+
+  // URL.revokeObjectURL( url ); breaks Firefox...
+
+}
+
+function saveString(text, filename) {
+
+  save(new Blob([text], { type: 'text/plain' }), filename);
+
+}
+
+function saveArrayBuffer(buffer, filename) {
+
+  save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
+
+}
+
+function exportGLTF(input) {
+
+  const gltfExporter = new GLTFExporter();
+
+  // const options = {
+  //   trs: document.getElementById('option_trs').checked,
+  //   onlyVisible: document.getElementById('option_visible').checked,
+  //   truncateDrawRange: document.getElementById('option_drawrange').checked,
+  //   binary: document.getElementById('option_binary').checked,
+  //   maxTextureSize: Number(document.getElementById('option_maxsize').value) || Infinity // To prevent NaN value
+  // };
+  gltfExporter.parse(input, function (result) {
+
+    if (result instanceof ArrayBuffer) {
+
+      saveArrayBuffer(result, 'scene.glb');
+
+    } else {
+
+      const output = JSON.stringify(result, null, 2);
+      console.log(output);
+      saveString(output, 'scene.gltf');
+
+    }
+
+  }/*, options*/);
+
+}
+
+
+// import React, { Suspense } from "react";
+// import { Canvas, useLoader } from "@react-three/fiber";
+// import { OrbitControls, useTexture } from "@react-three/drei";
+// import { TextureLoader } from "three/src/loaders/TextureLoader";
+
+// import Color from './Color'
+// // import "./styles.css";
+
+// // All textures are CC0 textures from: https://cc0textures.com/
+// // const name = (type) => `PavingStones092_1K_${type}.jpg`;
+
+// function Scene() {
+//   // const [
+//   //   colorMap,
+//   //   displacementMap,
+//   //   normalMap,
+//   //   roughnessMap,
+//   //   aoMap
+//   // ] = useLoader(TextureLoader, [
+//   //   name("Color"),
+//   //   name("Displacement"),
+//   //   name("Normal"),
+//   //   name("Roughness"),
+//   //   name("AmbientOcclusion")
+//   // ]);
+//   // const [
+//   //   colorMap,
+//   //   displacementMap,
+//   //   normalMap,
+//   //   roughnessMap,
+//   //   aoMap
+//   // ] = useTexture([
+//   //   name("Color"),
+//   //   name("Displacement"),
+//   //   name("Normal"),
+//   //   name("Roughness"),
+//   //   name("AmbientOcclusion")
+//   // ]);
+//   return (
+//     <>
+//       <ambientLight intensity={0.2} />
+//       <directionalLight />
+//       {/* <mesh>
+//         <sphereBufferGeometry args={[1, 100, 100]} />
+//         <meshStandardMaterial
+//           displacementScale={0.2}
+//           map={colorMap}
+//           displacementMap={displacementMap}
+//           normalMap={normalMap}
+//           roughnessMap={roughnessMap}
+//           aoMap={aoMap}
+//         />
+//       </mesh> */}
+//       <Color />
+//     </>
+//   );
+// }
+
+// export default function App() {
+//   return (
+//     <div className="App">
+//       <Canvas>
+//         <Suspense fallback={null}>
+//           <Scene />
+//           <OrbitControls autoRotate />
+//         </Suspense>
+//       </Canvas>
+//     </div>
+//   );
+// }
