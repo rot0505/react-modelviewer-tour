@@ -1,10 +1,10 @@
 import React, { Suspense, useState } from 'react'
 import { Canvas } from 'react-three-fiber'
 import { Html, Loader, OrbitControls } from '@react-three/drei'
-import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter'
+// import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter'
 
 import Color from './Color'
-import Model from './Model'
+// import Model from './Model'
 import White from './White'
 
 const windowColors = ['brown', 'red', 'green']
@@ -82,58 +82,58 @@ export default function App() {
 }
 
 
-const link = document.createElement('a');
+// const link = document.createElement('a');
 
-function save(blob, filename) {
+// function save(blob, filename) {
 
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  link.click();
+//   link.href = URL.createObjectURL(blob);
+//   link.download = filename;
+//   link.click();
 
-  // URL.revokeObjectURL( url ); breaks Firefox...
+//   // URL.revokeObjectURL( url ); breaks Firefox...
 
-}
+// }
 
-function saveString(text, filename) {
+// function saveString(text, filename) {
 
-  save(new Blob([text], { type: 'text/plain' }), filename);
+//   save(new Blob([text], { type: 'text/plain' }), filename);
 
-}
+// }
 
-function saveArrayBuffer(buffer, filename) {
+// function saveArrayBuffer(buffer, filename) {
 
-  save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
+//   save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
 
-}
+// }
 
-function exportGLTF(input) {
+// function exportGLTF(input) {
 
-  const gltfExporter = new GLTFExporter();
+//   const gltfExporter = new GLTFExporter();
 
-  // const options = {
-  //   trs: document.getElementById('option_trs').checked,
-  //   onlyVisible: document.getElementById('option_visible').checked,
-  //   truncateDrawRange: document.getElementById('option_drawrange').checked,
-  //   binary: document.getElementById('option_binary').checked,
-  //   maxTextureSize: Number(document.getElementById('option_maxsize').value) || Infinity // To prevent NaN value
-  // };
-  gltfExporter.parse(input, function (result) {
+//   // const options = {
+//   //   trs: document.getElementById('option_trs').checked,
+//   //   onlyVisible: document.getElementById('option_visible').checked,
+//   //   truncateDrawRange: document.getElementById('option_drawrange').checked,
+//   //   binary: document.getElementById('option_binary').checked,
+//   //   maxTextureSize: Number(document.getElementById('option_maxsize').value) || Infinity // To prevent NaN value
+//   // };
+//   gltfExporter.parse(input, function (result) {
 
-    if (result instanceof ArrayBuffer) {
+//     if (result instanceof ArrayBuffer) {
 
-      saveArrayBuffer(result, 'scene.glb');
+//       saveArrayBuffer(result, 'scene.glb');
 
-    } else {
+//     } else {
 
-      const output = JSON.stringify(result, null, 2);
-      console.log(output);
-      saveString(output, 'scene.gltf');
+//       const output = JSON.stringify(result, null, 2);
+//       console.log(output);
+//       saveString(output, 'scene.gltf');
 
-    }
+//     }
 
-  }/*, options*/);
+//   }/*, options*/);
 
-}
+// }
 
 
 // import React, { Suspense } from "react";
