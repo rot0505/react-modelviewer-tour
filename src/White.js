@@ -15,7 +15,7 @@ export default function Model(props) {
           <mesh visible={props.showWall} geometry={nodes['201146'].geometry} material={materials['Default Wall']} >
             <meshPhysicalMaterial color={props.wallColor} />
           </mesh>
-          <group visible={props.showWindow} position={[-10.35, 0.38, 0]} rotation={[0, 0, -Math.PI]}>
+          <group visible={props.showWindow} position={[-10.35, 0.38, 0]} rotation={[0, 0, -Math.PI]} scale={props.scaleWindow}>
             <mesh geometry={nodes.mesh_1.geometry} material={materials['Aluminum- Klil-Black']} >
               <meshPhysicalMaterial color={props.windowColor} />
             </mesh>

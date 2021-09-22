@@ -11,11 +11,26 @@ const windowColors = ['brown', 'red', 'green']
 const wallColors = ['grey', 'yellow', 'lightgreen']
 
 export default function App() {
+  const [width, setWidth] = useState(1)
+  const [depth, setDepth] = useState(1)
+  const [height, setHeight] = useState(1)
   const [showWindow, setShowWindow] = useState(true)
   const [showWall, setShowWall] = useState(true)
   const [currentModel, setCurrentModel] = useState(true)
   const [indexWindowColor, setIndexWindowColor] = useState(0)
   const [indexWallColor, setIndexWallColor] = useState(0)
+
+  const changeWidth = (e) => {
+    setWidth(e.target.value / 300)
+  }
+
+  const changeDepth = (e) => {
+    setDepth(e.target.value / 10)
+  }
+
+  const changeHeight = (e) => {
+    setHeight(e.target.value / 300)
+  }
 
   const changeWindowColor = () => {
     const index = (indexWindowColor + 1) % 3
@@ -45,13 +60,16 @@ export default function App() {
                 <Loader />
               </Html>
             }>
-            {currentModel && <White position={[10, 0, 0]} showWindow={showWindow} showWall={showWall} windowColor={windowColors[indexWindowColor]} wallColor={wallColors[indexWallColor]} />}
+            {currentModel && <White position={[10, 0, 0]} scaleWindow={[width, depth, height]} showWindow={showWindow} showWall={showWall} windowColor={windowColors[indexWindowColor]} wallColor={wallColors[indexWallColor]} />}
             {!currentModel && <Color position={[10, 0, 0]} />}
             <OrbitControls />
           </Suspense>
         </Canvas>
       </div>
       <div style={{ width: '15%', padding: '100px 20px', display: 'grid' }}>
+        <div>Width: <input type="number" defaultValue={300} onChange={changeWidth} /></div>
+        <div>Height: <input type="number" defaultValue={300} onChange={changeHeight} /></div>
+        <div>Depth: <input type="number" defaultValue={10} onChange={changeDepth} /></div>
         <button onClick={() => setCurrentModel(!currentModel)}>Toggle the pre-defined product</button>
         <button onClick={() => setShowWindow(!showWindow)}>Toggle the window visibility</button>
         <button onClick={() => setShowWall(!showWall)}>Toggle the wall visibility</button>
