@@ -43,7 +43,7 @@ function App() {
           // auto-rotate
           scale="1 1 1"
           // poster={require(`assets/images/${product.image}`).default}
-          src={require(`./assets/models/window.glb`).default}
+          src={require(`./assets/models/color.glb`).default}
           // alt={product.title}
           exposure={1}
           // shadow-intensity="1"
