@@ -7,7 +7,7 @@ import Color from './Color'
 // import Model from './Model'
 import White from './White'
 
-const windowColors = ['brown', 'red', 'green']
+const windowColors = ['black', 'red', 'green']
 const wallColors = ['grey', 'yellow', 'lightgreen']
 
 export default function App() {
@@ -52,7 +52,7 @@ export default function App() {
             camera.lookAt(0, 0, 0)
           }}>
           <color attach="background" args={['#fff']} />
-          <ambientLight intensity={2} />
+          <ambientLight intensity={5} />
 
           <Suspense
             fallback={

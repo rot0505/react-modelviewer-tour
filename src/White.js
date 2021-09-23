@@ -17,9 +17,10 @@ export default function Model(props) {
           </mesh>
           <group visible={props.showWindow} position={[-10.35, 0.38, 0]} rotation={[0, 0, -Math.PI]} scale={props.scaleWindow}>
             <mesh geometry={nodes.mesh_1.geometry} material={materials['Aluminum- Klil-Black']} >
-              <meshPhysicalMaterial color={props.windowColor} />
+              <meshPhongMaterial attach="material" color="red" />
             </mesh>
-            <mesh geometry={nodes.mesh_1_1.geometry} material={materials['Glass-Klil-Clear']} />
+            <mesh geometry={nodes.mesh_1_1.geometry} material={materials['Glass-Klil-Clear']} >
+            </mesh>
           </group>
         </group>
       </group>
